@@ -15,6 +15,7 @@ import 'presentation/screens/notificaciones/notificaciones_screen.dart';
 import 'business/entities/viaje.dart';
 import 'business/entities/transportista.dart';
 import 'business/providers/usuario_provider.dart';
+import 'business/services/service_locator.dart';
 
 void main() {
   runApp(const ProviderScope(child: TransControlApp()));
@@ -105,26 +106,109 @@ class MiPerfilScreen extends StatelessWidget {
   }
 }
 
-class RecuperarPasswordScreen extends StatelessWidget {
+class RecuperarPasswordScreen extends StatefulWidget {
   const RecuperarPasswordScreen({Key? key}) : super(key: key);
+
+  @override
+  State<RecuperarPasswordScreen> createState() => _RecuperarPasswordScreenState();
+}
+
+class _RecuperarPasswordScreenState extends State<RecuperarPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  bool _loading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    final email = _emailController.text.trim();
+    setState(() => _loading = true);
+
+    try {
+      final usuario = await serviceLocator.usuarioRepository.buscarPorCorreo(email);
+      await Future.delayed(const Duration(milliseconds: 600));
+      if (usuario != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Se ha enviado un correo con instrucciones a $email')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No existe una cuenta asociada a ese correo')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al procesar la solicitud')),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Correo requerido';
+    final email = value.trim();
+    final emailRegex = RegExp(r"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    if (!emailRegex.hasMatch(email)) return 'Correo inválido';
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Recuperar Contraseña')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.lock_reset, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            const Text('Pantalla de Recuperación de Contraseña'),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Volver'),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 24),
+              Icon(Icons.lock_reset, size: 72, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              Text(
+                'Recuperar Contraseña',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Ingresa el correo asociado a tu cuenta. Si existe, recibirás instrucciones para restablecer la contraseña.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Correo electrónico',
+                    prefixIcon: const Icon(Icons.email),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  validator: _validateEmail,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _loading ? null : _submit,
+                child: _loading
+                    ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Text('Enviar instrucciones'),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: _loading ? null : () => Navigator.of(context).pop(),
+                child: const Text('Volver al inicio de sesión'),
+              ),
+            ],
+          ),
         ),
       ),
     );
