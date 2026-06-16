@@ -181,7 +181,8 @@ flutter run -d android   # Emulador Android
 
 | Versión | Fecha | Rama | Descripción de cambios |
 |---------|-------|------|------------------------|
-| `v1.0.0` | 2026-06-15 | `main` | 🎉 **Versión inicial del proyecto.** Estructura base de la aplicación Flutter con arquitectura Clean Architecture. Se incluyen las entidades del dominio (Viaje, Transportista, Vehículo, Documento, Notificación, Ruta, Usuario), pantallas principales (Auth, Dashboard, Viajes, Transportistas, Monitoreo, Documentos, Notificaciones), gestión de estado con Riverpod, tema personalizado, patrón Observer y patrón Strategy. |
+| `v1.0.0` | 2026-06-15 | `main` | 🎉 **Versión inicial del proyecto.** Estructura base de la aplicación Flutter, con arquitectura en tres capas, separando claramente la capa de Datos, la capa de Lógica de Negocio y la capa de Presentación.
+. Se incluyen las entidades del dominio (Viaje, Transportista, Vehículo, Documento, Notificación, Ruta, Usuario), pantallas principales (Auth, Dashboard, Viajes, Transportistas, Monitoreo, Documentos, Notificaciones), gestión de estado con Riverpod, tema personalizado, patrón Observer y patrón Strategy. |
 
 ---
 
