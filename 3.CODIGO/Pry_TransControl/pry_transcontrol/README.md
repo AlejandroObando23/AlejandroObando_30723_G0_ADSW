@@ -1,6 +1,6 @@
 # 🚛 Pry_TransControl
 
-> **Sistema de gestión y monitoreo de transporte** desarrollado con Flutter como proyecto académico.
+> **Sistema de gestión y monitoreo de transporte** desarrollado con Flutter
 
 ---
 
@@ -14,9 +14,9 @@
 
 | Nombre | Rama Git | Rol |
 |--------|----------|-----|
-| Alejandro Obando | `Alejandro` | Líder del proyecto / Backend |
-| Juan | `Juan` | Frontend / UI |
-| Steven | `Steven` | Integración / Testing |
+| Alejandro Obando | `Alejandro` | Modelado/ Integración / Testing  |
+| Juan | `Juan` |Backend / Frontend / UI |
+| Steven | `Steven` | Líder del proyecto/ Integración / Testing |
 
 ---
 
