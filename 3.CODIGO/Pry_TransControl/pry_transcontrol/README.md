@@ -182,6 +182,7 @@ flutter run -d android   # Emulador Android
 | Versión | Fecha | Rama | Descripción de cambios |
 |---------|-------|------|------------------------|
 | `v1.0.0` | 2026-06-15 | `main` | 🎉 **Versión inicial del proyecto.** Estructura base de la aplicación Flutter con arquitectura Clean Architecture. Se incluyen las entidades del dominio (Viaje, Transportista, Vehículo, Documento, Notificación, Ruta, Usuario), pantallas principales (Auth, Dashboard, Viajes, Transportistas, Monitoreo, Documentos, Notificaciones), gestión de estado con Riverpod, tema personalizado, patrón Observer y patrón Strategy. |
+| `v1.1.0` | 2026-06-15 | `main` | 🎨 **Mejoras visuales del Dashboard y datos de Ecuador.** Rediseño completo del dashboard: header con gradiente azul profundo, avatar del usuario, badge de rol, tarjetas de estadísticas con gradientes (2×2), tarjetas de viajes con chips de estado coloreados y emojis por tipo de carga, grid de acciones compacto horizontal con ícono + subtítulo. Datos de viajes actualizados a ciudades ecuatorianas: Quito→Guayaquil, Cuenca→Quito, Ambato→Manta, Guayaquil→Loja. Animaciones de entrada con flutter_animate. |
 
 ---
 
