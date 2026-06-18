@@ -162,6 +162,7 @@ Permite **adaptar una interfaz o sistema externo para que trabaje en conjunto co
 | Versión | Fecha | Descripción de cambios |
 |---------|-------|------------------------|
 | `v1.0.0` | 2026-06-17 | 🎉 **Versión Inicial Completa.** Se implementó el rediseño premium del Frontend (React-Bootstrap) y la refactorización arquitectónica del Backend (Node/TypeScript). Se añadieron validaciones de negocio, CRUD de Transportistas con confirmación mediante Modales, asignación dinámica en Viajes, y se organizaron exitosamente los patrones Observer y Strategy en la capa de Dominio y Negocio. |
+| `v1.1.0` | 2026-06-17 | 📖 **Documentación de Arquitectura.** Se añadió documentación detallada (JSDoc) en el código fuente para explicar la implementación, ventajas y mapeo de los patrones de diseño: Strategy, Observer y Adapter. |
 
 ---
 

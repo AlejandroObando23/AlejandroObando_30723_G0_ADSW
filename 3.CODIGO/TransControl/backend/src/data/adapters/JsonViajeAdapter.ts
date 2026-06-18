@@ -3,6 +3,13 @@ import { IViajeRepository } from '../../domain/interfaces/IViajeRepository';
 import { JsonStorage } from '../storage/JsonStorage';
 
 /*
+ * PATRÓN ADAPTER: ADAPTADOR (CONCRETE ADAPTER)
+ * ==========================================
+ * Actúa como puente entre la interfaz de dominio (IViajeRepository) y el
+ * almacenamiento físico en disco (JsonStorage). La capa de negocio interactúa 
+ * con este adaptador sin preocuparse de si los datos se guardan en un archivo .json 
+ * o en una base de datos compleja.
+ *
  * NOTA DE MIGRACIÓN:
  * Para migrar a Prisma/PostgreSQL, crea PrismaViajeAdapter que implemente IViajeRepository.
  * No necesitarás modificar la capa de negocio (ViajeService), 

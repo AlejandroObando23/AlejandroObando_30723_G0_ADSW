@@ -3,11 +3,17 @@ import { ITransportistaRepository } from '../../domain/interfaces/ITransportista
 import { JsonStorage } from '../storage/JsonStorage';
 
 /* 
+ * PATRÓN ADAPTER: ADAPTADOR (CONCRETE ADAPTER)
+ * ==========================================
+ * Esta clase actúa como un traductor entre dos mundos incompatibles.
+ * Por un lado, la capa de negocio espera un "ITransportistaRepository" con métodos estándar 
+ * (create, update, delete). Por otro lado, JsonStorage sabe cómo manipular archivos físicos .json.
+ * El Adapter "envuelve" a JsonStorage para que la capa de negocio pueda guardar datos
+ * sin saber que está usando un archivo plano.
+ *
  * NOTA DE MIGRACIÓN: 
- * Para migrar a Prisma, crea un archivo PrismaTransportistaAdapter.ts 
- * que implemente ITransportistaRepository usando prisma.transportista.create(), etc.
- * Luego, en el contenedor de inyección de dependencias o en los servicios, 
- * simplemente cambia la instancia de JsonTransportistaAdapter por PrismaTransportistaAdapter.
+ * Para migrar a una Base de Datos real como Prisma, solo debes crear un "PrismaTransportistaAdapter",
+ * implementar la interfaz, y cambiar la inyección en el servicio. La lógica de negocio no se tocará.
  */
 export class JsonTransportistaAdapter implements ITransportistaRepository {
   private storage: JsonStorage<Transportista>;

@@ -1,13 +1,23 @@
 // ==========================================
-// INTERFAZ STRATEGY
+// PATRÓN STRATEGY: INTERFAZ (STRATEGY)
 // ==========================================
+/**
+ * Define el contrato común para todos los algoritmos de cálculo de rutas.
+ * El patrón Strategy permite que el "Contexto" (RutaCalculadora) use esta interfaz
+ * sin saber qué algoritmo específico se está utilizando.
+ */
 export interface RouteStrategy {
   calcularRuta(origen: string, destino: string): any;
 }
 
 // ==========================================
-// ESTRATEGIAS CONCRETAS
+// PATRÓN STRATEGY: ESTRATEGIAS CONCRETAS
 // ==========================================
+/**
+ * Cada clase "ConcreteStrategy" implementa un algoritmo distinto.
+ * Al aislar estos algoritmos en clases separadas, evitamos usar bloques
+ * enormes de if/else en la lógica principal y aplicamos el principio Abierto/Cerrado (OCP).
+ */
 
 export class RutaMasRapidaStrategy implements RouteStrategy {
   calcularRuta(origen: string, destino: string) {
@@ -52,9 +62,13 @@ export class RutaMenorDistanciaStrategy implements RouteStrategy {
 }
 
 // ==========================================
-// CONTEXTO
+// PATRÓN STRATEGY: CONTEXTO
 // ==========================================
-
+/**
+ * RutaCalculadora es el "Contexto". No implementa el algoritmo de rutas por sí mismo,
+ * sino que delega el trabajo al objeto "estrategia" que tiene asignado. 
+ * Esto permite cambiar el algoritmo en pleno vuelo usando setEstrategia().
+ */
 export class RutaCalculadora {
   private estrategia: RouteStrategy;
 

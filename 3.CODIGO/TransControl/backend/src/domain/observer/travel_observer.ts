@@ -1,9 +1,12 @@
 import { ISystemObserver, SystemSubject } from './SystemObserver';
 
 // ==========================================
-// OBSERVERS CONCRETOS
+// PATRÓN OBSERVER: OBSERVERS CONCRETOS
 // ==========================================
-
+/**
+ * Cada clase "Observer" concreta reacciona de forma independiente a los eventos
+ * notificados por el Sujeto, promoviendo el bajo acoplamiento.
+ */
 export class CoordinadorObserver implements ISystemObserver {
   update(event: string, data: any): void {
     if (['VIAJE_CREADO', 'VIAJE_CANCELADO', 'VIAJE_REPROGRAMADO', 'DESVIO_RUTA'].includes(event)) {
@@ -32,9 +35,14 @@ export class TransportistaObserver implements ISystemObserver {
 }
 
 // ==========================================
-// SUBJECT ESPECÍFICO (Opcional, pero recomendado para mantener encapsulamiento)
+// PATRÓN OBSERVER: SUJETO (SUBJECT)
 // ==========================================
-
+/**
+ * ViajeSubject es el "Sujeto Observable".
+ * Mantiene la lista de observadores (heredada de SystemSubject) y provee métodos
+ * para notificar eventos clave del ciclo de vida de un viaje.
+ * La lógica principal no sabe quién reacciona, solo notifica que "algo pasó".
+ */
 export class ViajeSubject extends SystemSubject {
   constructor() {
     super();

@@ -1,7 +1,23 @@
+// ==========================================
+// PATRÓN OBSERVER: INTERFAZ BASE
+// ==========================================
+/**
+ * Define la interfaz que todos los observadores del sistema deben implementar.
+ * El método update se ejecuta automáticamente cuando el "Sujeto" notifica un cambio.
+ */
 export interface ISystemObserver {
   update(event: string, data: any): void;
 }
 
+// ==========================================
+// PATRÓN OBSERVER: SUJETO BASE (SUBJECT)
+// ==========================================
+/**
+ * Clase base para cualquier Sujeto (Subject) en el sistema.
+ * Gestiona una lista genérica de observadores y contiene la lógica para 
+ * suscribirlos (attach), desuscribirlos (detach) y notificarles (notify) 
+ * cuando ocurre un evento importante.
+ */
 export class SystemSubject {
   private observers: ISystemObserver[] = [];
 

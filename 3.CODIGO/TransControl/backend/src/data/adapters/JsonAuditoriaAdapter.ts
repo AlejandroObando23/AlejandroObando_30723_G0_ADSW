@@ -3,6 +3,14 @@ import { JsonStorage } from '../storage/JsonStorage';
 import { ISystemObserver } from '../../domain/observer/SystemObserver';
 import { v4 as uuidv4 } from 'uuid';
 
+/*
+ * PATRÓN ADAPTER / OBSERVER
+ * ==========================================
+ * Esta clase actúa simultáneamente como un Adaptador (Adapter) para guardar los 
+ * registros en 'auditoria.json' usando JsonStorage, y también implementa 
+ * ISystemObserver (Patrón Observer) para escuchar pasivamente los eventos del sistema
+ * y guardarlos como logs de auditoría sin intervenir en la lógica principal.
+ */
 export class JsonAuditoriaAdapter implements ISystemObserver {
   private storage: JsonStorage<Auditoria>;
 
