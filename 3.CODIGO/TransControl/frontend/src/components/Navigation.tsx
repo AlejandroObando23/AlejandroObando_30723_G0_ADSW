@@ -11,6 +11,11 @@ export function Navigation() {
 
   if (path === '/login' || path === '/registro') return null;
 
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
+  const userName = user ? user.nombres : 'Juan';
+  const userRole = user ? user.rol : 'ADMINISTRADOR';
+
   if (path === '/' || path === '/dashboard') {
     return (
       <div className="dashboard-header d-flex justify-content-between align-items-center">
@@ -19,8 +24,8 @@ export function Navigation() {
             <i className="bi bi-person-fill text-tc-orange" style={{ fontSize: '1.8rem', transform: 'rotate(-10deg)' }}></i>
           </div>
           <div>
-            <h1 className="mb-1">¡Hola, Juan! 👋</h1>
-            <span className="badge rounded-pill mt-1" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>ADMINISTRADOR</span>
+            <h1 className="mb-1">¡Hola, {userName}! 👋</h1>
+            <span className="badge rounded-pill mt-1" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>{userRole.toUpperCase()}</span>
           </div>
         </div>
         <div>

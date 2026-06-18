@@ -20,4 +20,8 @@ export class JsonUsuarioAdapter {
     const data = await this.storage.readAll();
     return data.find(u => u.correo === correo) || null;
   }
+
+  async findAll(): Promise<(Usuario & { passwordHash: string })[]> {
+    return await this.storage.readAll();
+  }
 }

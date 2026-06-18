@@ -1,16 +1,50 @@
 import { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { api } from '../services/api';
 
 export function Login() {
   const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem('token', 'demo-token');
-    window.location.href = '/';
+    setErrorMsg('');
+    setLoading(true);
+    try {
+      const response = await api.post('/auth/login', { correo, password });
+      if (response.data?.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.usuario));
+        window.location.href = '/';
+      } else {
+        setErrorMsg('No se recibió token de acceso.');
+      }
+    } catch (error: any) {
+      console.error(error);
+      if (error.response?.data?.error) {
+        let errData = error.response.data.error;
+        if (typeof errData === 'string' && (errData.trim().startsWith('[') || errData.trim().startsWith('{'))) {
+          try {
+            errData = JSON.parse(errData);
+          } catch (e) {}
+        }
+        if (Array.isArray(errData)) {
+          setErrorMsg(errData.map((e: any) => e.message || JSON.stringify(e)).join(' | '));
+        } else if (typeof errData === 'object' && errData !== null && errData.message) {
+          setErrorMsg(errData.message);
+        } else {
+          setErrorMsg(typeof errData === 'string' ? errData : JSON.stringify(errData));
+        }
+      } else {
+        setErrorMsg('Credenciales incorrectas o error de conexión con el servidor.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -27,6 +61,9 @@ export function Login() {
 
       <div className="tc-card" style={{ width: '100%', maxWidth: '420px', padding: '40px 30px' }}>
         <h4 className="fw-bold mb-4 text-center">Iniciar Sesión</h4>
+        
+        {errorMsg && <Alert variant="danger" onClose={() => setErrorMsg('')} dismissible className="mb-4"><i className="bi bi-exclamation-triangle-fill me-2"></i>{errorMsg}</Alert>}
+
         <Form onSubmit={handleLogin}>
           
           <div className="input-icon-wrapper mb-3">
@@ -34,7 +71,7 @@ export function Login() {
             <Form.Control 
               type="email" 
               placeholder="Correo Electrónico" 
-              className="custom-input" 
+              className="custom-input" required
               value={correo}
               onChange={e => setCorreo(e.target.value)}
             />
@@ -45,7 +82,7 @@ export function Login() {
             <Form.Control 
               type="password" 
               placeholder="Contraseña" 
-              className="custom-input" 
+              className="custom-input" required
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
@@ -55,8 +92,8 @@ export function Login() {
             <Link to="/recuperar-contrasena" className="text-decoration-none small" style={{ color: 'var(--tc-blue-light)', fontWeight: '500' }}>¿Olvidaste tu contraseña?</Link>
           </div>
 
-          <button type="submit" className="btn-tc-primary w-100 py-3 mb-4" style={{ fontSize: '1.1rem' }}>
-            Ingresar al Sistema <i className="bi bi-arrow-right ms-2"></i>
+          <button type="submit" className="btn-tc-primary w-100 py-3 mb-4" style={{ fontSize: '1.1rem' }} disabled={loading}>
+            {loading ? 'Ingresando...' : <>Ingresar al Sistema <i className="bi bi-arrow-right ms-2"></i></>}
           </button>
 
           <div className="text-center mt-3 small text-muted">

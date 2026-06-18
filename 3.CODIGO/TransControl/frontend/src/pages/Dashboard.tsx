@@ -6,21 +6,40 @@ import { api } from '../services/api';
 export function Dashboard() {
   const [viajes, setViajes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isTransportista, setIsTransportista] = useState(false);
 
   useEffect(() => {
-    fetchViajes();
-  }, []);
+    const loadDashboardData = async () => {
+      try {
+        const userStr = localStorage.getItem('user');
+        const currentUser = userStr ? JSON.parse(userStr) : null;
+        const role = currentUser?.rol?.toLowerCase() || '';
+        const isDriver = role === 'transportista';
+        setIsTransportista(isDriver);
 
-  const fetchViajes = async () => {
-    try {
-      const response = await api.get('/viajes');
-      setViajes(response.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        const tripsResponse = await api.get('/viajes');
+        let trips = tripsResponse.data;
+
+        if (isDriver && currentUser) {
+          const driversResponse = await api.get('/transportistas');
+          const driver = driversResponse.data.find((t: any) => t.cedula === currentUser.cedula);
+          if (driver) {
+            trips = trips.filter((v: any) => v.transportistaId === driver.id);
+          } else {
+            trips = [];
+          }
+        }
+
+        setViajes(trips);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardData();
+  }, []);
 
   const totales = viajes.length;
   const planificados = viajes.filter(v => v.estado === 'Disponible').length;
@@ -89,34 +108,38 @@ export function Dashboard() {
 
       <h5 className="mb-4 fw-bold" style={{ color: 'var(--tc-blue-dark)' }}>Acciones Rápidas</h5>
       <Row className="g-4 mb-5">
-        <Col md={3} sm={6}>
-          <Link to="/transportistas" className="action-card">
-            <div className="icon-wrapper">
-              <i className="bi bi-people-fill"></i>
-            </div>
-            <div className="title">Transportistas</div>
-            <div className="desc">Gestión y control de conductores</div>
-          </Link>
-        </Col>
-        <Col md={3} sm={6}>
-          <Link to="/viajes" className="action-card">
-            <div className="icon-wrapper">
-              <i className="bi bi-cursor-fill"></i>
-            </div>
-            <div className="title">Viajes y Rutas</div>
-            <div className="desc">Asignación y seguimiento</div>
-          </Link>
-        </Col>
-        <Col md={3} sm={6}>
-          <Link to="/documentos" className="action-card">
-            <div className="icon-wrapper">
-              <i className="bi bi-file-earmark-check-fill"></i>
-            </div>
-            <div className="title">Documentación</div>
-            <div className="desc">Validación de licencias y SOAT</div>
-          </Link>
-        </Col>
-        <Col md={3} sm={6}>
+        {!isTransportista && (
+          <>
+            <Col md={3} sm={6}>
+              <Link to="/transportistas" className="action-card">
+                <div className="icon-wrapper">
+                  <i className="bi bi-people-fill"></i>
+                </div>
+                <div className="title">Transportistas</div>
+                <div className="desc">Gestión y control de conductores</div>
+              </Link>
+            </Col>
+            <Col md={3} sm={6}>
+              <Link to="/viajes" className="action-card">
+                <div className="icon-wrapper">
+                  <i className="bi bi-cursor-fill"></i>
+                </div>
+                <div className="title">Viajes y Rutas</div>
+                <div className="desc">Asignación y seguimiento</div>
+              </Link>
+            </Col>
+            <Col md={3} sm={6}>
+              <Link to="/documentos" className="action-card">
+                <div className="icon-wrapper">
+                  <i className="bi bi-file-earmark-check-fill"></i>
+                </div>
+                <div className="title">Documentación</div>
+                <div className="desc">Validación de licencias y SOAT</div>
+              </Link>
+            </Col>
+          </>
+        )}
+        <Col md={isTransportista ? 12 : 3} sm={isTransportista ? 12 : 6}>
           <Link to="/monitoreo" className="action-card">
             <div className="icon-wrapper">
               <i className="bi bi-geo-alt-fill"></i>
@@ -129,7 +152,9 @@ export function Dashboard() {
 
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5 className="fw-bold m-0" style={{ color: 'var(--tc-blue-dark)' }}>Actividad Reciente</h5>
-        <Link to="/viajes" className="btn btn-link text-decoration-none text-tc-orange fw-bold p-0">Ver todos <i className="bi bi-arrow-right"></i></Link>
+        {!isTransportista && (
+          <Link to="/viajes" className="btn btn-link text-decoration-none text-tc-orange fw-bold p-0">Ver todos <i className="bi bi-arrow-right"></i></Link>
+        )}
       </div>
       
       <div className="tc-card p-0 overflow-hidden">

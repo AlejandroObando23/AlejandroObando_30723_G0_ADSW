@@ -3,8 +3,20 @@
     "id": "12345",
     "nombres": "Admin Sistema",
     "apellidos": "TransControl",
+    "cedula": "1718230491",
+    "telefono": "0991234567",
     "correo": "admin@transcontrol.com",
     "rolId": "Gerente",
     "passwordHash": "$2b$10$AqMXXxLbGD/rVHwdAXc9TOKjGYD7XQlZMJ/63Jio8ESnCO0oztPES"
+  },
+  {
+    "id": "e1490db2-d510-448e-8752-0b662a0f5557",
+    "nombres": "Pepe",
+    "apellidos": "Caiza",
+    "cedula": "1727641407",
+    "telefono": "0990323773",
+    "correo": "pepe@caiza.com",
+    "rolId": "Transportista",
+    "passwordHash": "$2b$10$oMhtSfeGW2o5TJDp2qg6A.QIjijGK5zfDkZDi/2qgF/MDN.W0DIGq"
   }
 ]

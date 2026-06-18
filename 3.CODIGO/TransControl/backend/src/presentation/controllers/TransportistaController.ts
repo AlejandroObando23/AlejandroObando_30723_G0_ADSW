@@ -15,7 +15,7 @@ export class TransportistaController {
       const transportista = await this.transportistaService.create(validatedData as any);
       res.status(201).json(transportista);
     } catch (error: any) {
-      res.status(400).json({ error: error.errors || error.message });
+      res.status(400).json({ error: error.issues || error.errors || error.message });
     }
   };
 
@@ -43,14 +43,15 @@ export class TransportistaController {
 
   update = async (req: Request, res: Response): Promise<void> => {
     try {
-      const result = await this.transportistaService.update(req.params.id as string, req.body);
+      const validatedData = transportistaSchema.parse(req.body);
+      const result = await this.transportistaService.update(req.params.id as string, validatedData as any);
       if (result) {
         res.json(result);
       } else {
         res.status(404).json({ error: 'Transportista no encontrado' });
       }
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      res.status(400).json({ error: error.issues || error.errors || error.message });
     }
   };
 

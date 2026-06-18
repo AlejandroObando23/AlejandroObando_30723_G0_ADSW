@@ -16,7 +16,7 @@ export class ViajeController {
       const viaje = await this.viajeService.create(validatedData as any);
       res.status(201).json(viaje);
     } catch (error: any) {
-      res.status(400).json({ error: error.errors || error.message });
+      res.status(400).json({ error: error.issues || error.errors || error.message });
     }
   };
 

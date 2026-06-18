@@ -7,4 +7,10 @@ export interface Transportista {
   telefono: string;
   direccion: string;
   estado: 'Activo' | 'Inactivo';
+  vehiculo?: {
+    tipo: string;
+    placa: string;
+    marca: string;
+    anio: number;
+  } | null;
 }

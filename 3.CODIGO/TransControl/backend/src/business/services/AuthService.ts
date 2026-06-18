@@ -8,14 +8,25 @@ export class AuthService {
   private secret = 'super-secret-jwt-key'; // En producción, usar variables de entorno
 
   async register(data: any) {
-    const exists = await this.adapter.findByCorreo(data.correo);
-    if (exists) throw new Error('El correo ya está registrado');
+    const list = await this.adapter.findAll();
+    
+    if (list.some(u => u.cedula === data.cedula)) {
+      throw new Error('La cédula ya está registrada para otro usuario');
+    }
+    if (list.some(u => u.telefono === data.telefono)) {
+      throw new Error('El teléfono ya está registrado para otro usuario');
+    }
+    if (list.some(u => u.correo.toLowerCase() === data.correo.toLowerCase())) {
+      throw new Error('El correo electrónico ya está registrado para otro usuario');
+    }
 
     const passwordHash = await bcrypt.hash(data.password, 10);
     const usuario = {
       id: uuidv4(),
       nombres: data.nombres,
       apellidos: data.apellidos,
+      cedula: data.cedula,
+      telefono: data.telefono,
       correo: data.correo,
       rolId: data.rolId || 'Transportista',
       passwordHash

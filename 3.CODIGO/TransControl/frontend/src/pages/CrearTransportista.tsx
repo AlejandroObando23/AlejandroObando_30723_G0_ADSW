@@ -22,7 +22,16 @@ export function CrearTransportista() {
         try {
           const response = await api.get(`/transportistas/${id}`);
           if (response.data) {
-            setFormData(response.data);
+            const { vehiculo: vData, ...tData } = response.data;
+            setFormData(tData);
+            if (vData) {
+              setVehiculo({
+                tipo: vData.tipo || '',
+                placa: vData.placa || '',
+                marca: vData.marca || '',
+                anio: vData.anio?.toString() || ''
+              });
+            }
           }
         } catch (error) {
           setErrorMsg('Error al cargar los datos del transportista.');
@@ -50,22 +59,41 @@ export function CrearTransportista() {
     setErrorMsg('');
     setSuccessMsg('');
     try {
+      const payload = {
+        ...formData,
+        vehiculo: (vehiculo.tipo || vehiculo.placa || vehiculo.marca || vehiculo.anio) ? {
+          tipo: vehiculo.tipo,
+          placa: vehiculo.placa,
+          marca: vehiculo.marca,
+          anio: vehiculo.anio ? parseInt(vehiculo.anio, 10) : undefined
+        } : null
+      };
+
       if (isEditing) {
-        await api.put(`/transportistas/${id}`, formData);
+        await api.put(`/transportistas/${id}`, payload);
         setSuccessMsg('Transportista actualizado exitosamente. Redirigiendo...');
       } else {
-        await api.post('/transportistas', formData);
+        await api.post('/transportistas', payload);
         setSuccessMsg('Transportista creado exitosamente. Redirigiendo...');
       }
       setTimeout(() => navigate('/transportistas'), 1500);
     } catch (error: any) {
       console.error(error);
       if (error.response?.data?.error) {
-        const errData = error.response.data.error;
+        let errData = error.response.data.error;
+        if (typeof errData === 'string' && (errData.trim().startsWith('[') || errData.trim().startsWith('{'))) {
+          try {
+            errData = JSON.parse(errData);
+          } catch (e) {
+            // Keep as string if parsing fails
+          }
+        }
         if (Array.isArray(errData)) {
-          setErrorMsg(errData.map((e: any) => e.message).join(' | '));
+          setErrorMsg(errData.map((e: any) => e.message || JSON.stringify(e)).join(' | '));
+        } else if (typeof errData === 'object' && errData !== null && errData.message) {
+          setErrorMsg(errData.message);
         } else {
-          setErrorMsg(errData);
+          setErrorMsg(typeof errData === 'string' ? errData : JSON.stringify(errData));
         }
       } else {
         setErrorMsg(`Error al ${isEditing ? 'actualizar' : 'crear'} transportista. Revisa los datos y la conexión.`);

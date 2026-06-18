@@ -11,6 +11,12 @@ interface Transportista {
   correo: string;
   telefono: string;
   estado: string;
+  vehiculo?: {
+    tipo: string;
+    placa: string;
+    marca: string;
+    anio: number;
+  } | null;
 }
 
 export function TransportistaList() {
@@ -116,6 +122,11 @@ export function TransportistaList() {
                     <div className="fw-bold text-tc-blue" style={{ fontSize: '1.1rem' }}>{t.nombres} {t.apellidos}</div>
                     <div className="small text-muted mt-1"><i className="bi bi-person-badge me-1"></i> CC: {t.cedula}</div>
                     <div className="small text-muted"><i className="bi bi-telephone me-1"></i> {t.telefono} | <i className="bi bi-envelope ms-1 me-1"></i> {t.correo}</div>
+                    {t.vehiculo && (
+                      <div className="small text-muted mt-1">
+                        <i className="bi bi-truck me-1"></i> Vehículo: {t.vehiculo.tipo} ({t.vehiculo.marca} - Placa: {t.vehiculo.placa} - Año: {t.vehiculo.anio})
+                      </div>
+                    )}
                   </div>
                 </div>
                   <div className="text-end">

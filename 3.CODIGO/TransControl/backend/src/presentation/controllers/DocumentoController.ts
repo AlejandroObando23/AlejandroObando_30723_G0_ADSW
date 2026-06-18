@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import { documentoSchema } from '../../business/validators/Schemas';
 
 export class DocumentoController {
   upload = async (req: Request, res: Response): Promise<void> => {
@@ -9,19 +10,19 @@ export class DocumentoController {
         return;
       }
       
-      const { tipo, transportistaId } = req.body;
+      const validatedData = documentoSchema.parse(req.body);
       const doc = {
         id: uuidv4(),
-        tipo,
+        tipo: validatedData.tipo,
         estado: 'Pendiente',
         rutaArchivo: req.file.path,
-        transportistaId
+        transportistaId: validatedData.transportistaId
       };
       
       // Aquí se usaría el DocumentoService y Adapter, pero devolvemos éxito para el MVP
       res.status(201).json({ message: 'Documento subido correctamente', documento: doc });
     } catch (error: any) {
-      res.status(500).json({ error: error.message });
+      res.status(400).json({ error: error.issues || error.errors || error.message });
     }
   };
 }

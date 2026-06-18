@@ -42,11 +42,20 @@ export function CrearViaje() {
     } catch (error: any) {
       console.error(error);
       if (error.response?.data?.error) {
-        const errData = error.response.data.error;
+        let errData = error.response.data.error;
+        if (typeof errData === 'string' && (errData.trim().startsWith('[') || errData.trim().startsWith('{'))) {
+          try {
+            errData = JSON.parse(errData);
+          } catch (e) {
+            // Keep as string if parsing fails
+          }
+        }
         if (Array.isArray(errData)) {
-          setErrorMsg(errData.map((e: any) => e.message).join(' | '));
+          setErrorMsg(errData.map((e: any) => e.message || JSON.stringify(e)).join(' | '));
+        } else if (typeof errData === 'object' && errData !== null && errData.message) {
+          setErrorMsg(errData.message);
         } else {
-          setErrorMsg(errData);
+          setErrorMsg(typeof errData === 'string' ? errData : JSON.stringify(errData));
         }
       } else {
         setErrorMsg('Error al crear el viaje. Verifica los datos.');

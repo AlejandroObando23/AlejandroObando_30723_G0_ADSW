@@ -16,13 +16,26 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
 
-function ProtectedRoute({ children }: { children: JSX.Element }) {
+function ProtectedRoute({ children, allowedRoles }: { children: JSX.Element; allowedRoles?: string[] }) {
   const token = localStorage.getItem('token');
   if (!token) return <Navigate to="/login" replace />;
+
+  if (allowedRoles) {
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const userRole = user?.rol || '';
+    if (!allowedRoles.map(r => r.toLowerCase()).includes(userRole.toLowerCase())) {
+      return <Navigate to="/dashboard" replace />;
+    }
+  }
+
   return children;
 }
 
 function App() {
+  const adminRoles = ['Gerente', 'Administrador', 'Coordinador'];
+  const allRoles = ['Gerente', 'Administrador', 'Coordinador', 'Transportista'];
+
   return (
     <Router>
       <Navigation />
@@ -33,17 +46,17 @@ function App() {
           <Route path="/registro" element={<Registro />} />
           <Route path="/recuperar-contrasena" element={<RecuperarContrasena />} />
           
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute allowedRoles={allRoles}><Dashboard /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute allowedRoles={allRoles}><Dashboard /></ProtectedRoute>} />
           
-          <Route path="/transportistas" element={<ProtectedRoute><TransportistaList /></ProtectedRoute>} />
-          <Route path="/crear-transportista" element={<ProtectedRoute><CrearTransportista /></ProtectedRoute>} />
-          <Route path="/editar-transportista/:id" element={<ProtectedRoute><CrearTransportista /></ProtectedRoute>} />
+          <Route path="/transportistas" element={<ProtectedRoute allowedRoles={adminRoles}><TransportistaList /></ProtectedRoute>} />
+          <Route path="/crear-transportista" element={<ProtectedRoute allowedRoles={adminRoles}><CrearTransportista /></ProtectedRoute>} />
+          <Route path="/editar-transportista/:id" element={<ProtectedRoute allowedRoles={adminRoles}><CrearTransportista /></ProtectedRoute>} />
           
-          <Route path="/viajes" element={<ProtectedRoute><ViajesList /></ProtectedRoute>} />
-          <Route path="/crear-viaje" element={<ProtectedRoute><CrearViaje /></ProtectedRoute>} />
-          <Route path="/documentos" element={<ProtectedRoute><DocumentacionList /></ProtectedRoute>} />
-          <Route path="/monitoreo" element={<ProtectedRoute><Monitoreo /></ProtectedRoute>} />
+          <Route path="/viajes" element={<ProtectedRoute allowedRoles={adminRoles}><ViajesList /></ProtectedRoute>} />
+          <Route path="/crear-viaje" element={<ProtectedRoute allowedRoles={adminRoles}><CrearViaje /></ProtectedRoute>} />
+          <Route path="/documentos" element={<ProtectedRoute allowedRoles={adminRoles}><DocumentacionList /></ProtectedRoute>} />
+          <Route path="/monitoreo" element={<ProtectedRoute allowedRoles={allRoles}><Monitoreo /></ProtectedRoute>} />
         </Routes>
       </div>
     </Router>
